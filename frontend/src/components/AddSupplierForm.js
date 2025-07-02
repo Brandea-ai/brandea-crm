@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Plus, Building2, MapPin, User, Mail, Phone, Globe, Package, Star, DollarSign, FileText } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { X, Plus } from 'lucide-react';
 import { createSupplier } from '../store/suppliersSlice';
 import toast from 'react-hot-toast';
 import './AddSupplierForm.css';
