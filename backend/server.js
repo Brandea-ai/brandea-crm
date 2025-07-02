@@ -67,7 +67,38 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
-sequelize.sync({ force: false }).then(() => {
+sequelize.sync({ force: false }).then(async () => {
+  // Check if database is empty and initialize if needed
+  const { Column, Supplier } = require('./models');
+  const columnCount = await Column.count();
+  
+  if (columnCount === 0) {
+    logger.info('Empty database detected, initializing...');
+    
+    // Create columns
+    const columns = [
+      { id: 'todo', name: 'Zu kontaktieren', order: 0 },
+      { id: 'contacted', name: 'Kontaktiert', order: 1 },
+      { id: 'offer', name: 'Angebot erhalten', order: 2 },
+      { id: 'done', name: 'Abgeschlossen', order: 3 }
+    ];
+    
+    await Column.bulkCreate(columns);
+    
+    // Create sample suppliers
+    const suppliers = [
+      { company: 'TechMed Solutions GmbH', type: 'Medizintechnik', location: 'München', status: 'todo', position: 0 },
+      { company: 'PharmaDirect AG', type: 'Pharmazeutika', location: 'Frankfurt', status: 'todo', position: 1 },
+      { company: 'MediSupply Berlin', type: 'Verbrauchsmaterial', location: 'Berlin', status: 'todo', position: 2 },
+      { company: 'BioTech Innovations', type: 'Biotechnologie', location: 'Hamburg', status: 'todo', position: 3 },
+      { company: 'CarePlus Logistics', type: 'Logistik', location: 'Düsseldorf', status: 'contacted', position: 0 },
+      { company: 'HealthFirst Supplies', type: 'Medizinprodukte', location: 'Stuttgart', status: 'contacted', position: 1 }
+    ];
+    
+    await Supplier.bulkCreate(suppliers);
+    logger.info('Database initialized with sample data');
+  }
+  
   app.listen(PORT, () => {
     logger.info(`Server running on port ${PORT}`);
   });
