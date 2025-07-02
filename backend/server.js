@@ -112,7 +112,17 @@ sequelize.sync({ force: false }).then(async () => {
     ];
     
     await Supplier.bulkCreate(suppliers);
-    logger.info('Database initialized with sample data');
+    
+    // Create default user
+    const bcrypt = require('bcryptjs');
+    const { User } = require('./models');
+    const hashedPassword = await bcrypt.hash('BrandeaTexamed2025', 10);
+    await User.create({
+      username: 'Brandea-Texamed',
+      password_hash: hashedPassword
+    });
+    
+    logger.info('Database initialized with sample data and user');
   }
   
   app.listen(PORT, () => {
