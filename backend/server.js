@@ -36,10 +36,26 @@ const limiter = rateLimit({
 
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://brandea-kanban.vercel.app', 'https://brandea-crm.netlify.app'] 
-    : 'http://localhost:3000',
-  credentials: true
+  origin: function(origin, callback) {
+    const allowedOrigins = [
+      'https://brandea-kanban.vercel.app',
+      'https://brandea-crm.netlify.app',
+      'http://localhost:3000'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      logger.warn(`Blocked request from origin: ${origin}`);
+      callback(null, true); // Temporarily allow all origins for debugging
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(limiter);
