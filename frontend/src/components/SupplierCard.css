@@ -1,0 +1,415 @@
+/* Supplier Card Styles - Fixed and Compact */
+.supplier-card {
+  background: white;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  cursor: grab;
+  transition: all 0.2s;
+  overflow: hidden;
+  min-height: 80px;
+}
+
+.supplier-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.supplier-card.sorting {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+.supplier-card.dragging {
+  padding: 20px;
+  opacity: 0.9;
+}
+
+.supplier-card.expanded .expandable-section {
+  overflow: visible;
+}
+
+/* Drag Handle */
+.card-drag-handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cbd5e1;
+  cursor: grab;
+  background: #f8fafc;
+  border-right: 1px solid #e2e8f0;
+  transition: all 0.2s;
+}
+
+.card-drag-handle:hover {
+  color: #94a3b8;
+  background: #f1f5f9;
+}
+
+.card-drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Card Header */
+.card-header {
+  padding: 8px 10px 8px 30px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 36px;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  cursor: text;
+  flex: 1;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-expand,
+.btn-delete {
+  background: transparent;
+  border: none;
+  padding: 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-expand:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+/* Card Body */
+.card-body {
+  padding: 8px 10px 8px 30px;
+}
+
+/* Status Section */
+.status-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 6px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.status-section label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-select {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.status-select:hover {
+  border-color: #cbd5e1;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+}
+
+/* Navigation Arrows */
+.nav-arrows {
+  display: flex;
+  gap: 3px;
+}
+
+.nav-arrows button {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 3px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.nav-arrows button:hover:not(:disabled) {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: white;
+}
+
+.nav-arrows button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Fields Grid */
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+/* Field Display */
+.field-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  background: #f8fafc;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  min-height: 28px;
+}
+
+.field-display:hover {
+  background: white;
+  border-color: #e2e8f0;
+}
+
+.field-icon {
+  color: #6366f1;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.field-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1px;
+  line-height: 1;
+}
+
+.field-value {
+  display: block;
+  font-size: 11px;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+.placeholder {
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+.edit-icon {
+  opacity: 0;
+  color: #94a3b8;
+  transition: opacity 0.2s;
+  width: 14px;
+  height: 14px;
+}
+
+.field-display:hover .edit-icon {
+  opacity: 1;
+}
+
+/* Field Edit */
+.field-edit {
+  display: flex;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.edit-input,
+.edit-textarea {
+  flex: 1;
+  padding: 6px 8px;
+  border: 2px solid #6366f1;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  background: white;
+  transition: all 0.2s;
+}
+
+.edit-input:focus,
+.edit-textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.edit-textarea {
+  resize: vertical;
+  min-height: 60px;
+  line-height: 1.4;
+}
+
+.company-edit {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-actions {
+  display: flex;
+  gap: 3px;
+}
+
+.btn-save,
+.btn-cancel {
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-save {
+  color: #10b981;
+}
+
+.btn-save:hover {
+  background: #d1fae5;
+  border-color: #10b981;
+}
+
+.btn-cancel {
+  color: #ef4444;
+}
+
+.btn-cancel:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+/* Expandable Section */
+.expandable-section {
+  overflow: hidden;
+}
+
+.fields-expanded {
+  padding-top: 8px;
+  display: grid;
+  gap: 6px;
+}
+
+/* Card Footer */
+.card-footer {
+  padding-top: 8px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.update-time {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fields-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-drag-handle {
+    width: 20px;
+  }
+
+  .card-header,
+  .card-body {
+    padding-left: 26px;
+  }
+
+  .status-section {
+    flex-wrap: wrap;
+  }
+
+  .nav-arrows {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+}
+
+/* Accessibility */
+.supplier-card:focus-within {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.supplier-card {
+  animation: slideIn 0.3s ease-out;
+}
