@@ -22,10 +22,5 @@
       "src": "/(.*)",
       "dest": "frontend/build/$1"
     }
-  ],
-  "functions": {
-    "backend/server.js": {
-      "includeFiles": "backend/**"
-    }
-  }
+  ]
 }
