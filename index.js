@@ -1,15 +1,29 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 
-const dbPath = process.env.NODE_ENV === 'production' && process.env.DATABASE_PATH
-  ? process.env.DATABASE_PATH
-  : path.join(__dirname, '../db/brandea_crm.sqlite');
+let sequelize;
 
-const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: dbPath,
-  logging: false
-});
+if (process.env.DATABASE_URL) {
+  // PostgreSQL for production
+  sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false
+      }
+    },
+    logging: false
+  });
+} else {
+  // SQLite for local development
+  const dbPath = path.join(__dirname, '../db/brandea_crm.sqlite');
+  sequelize = new Sequelize({
+    dialect: 'sqlite',
+    storage: dbPath,
+    logging: false
+  });
+}
 
 const User = sequelize.define('User', {
   id: {
