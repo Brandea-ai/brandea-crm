@@ -12,6 +12,7 @@ const express = require('express');
   const suppliersRoutes = require('./routes/suppliers');
   const columnsRoutes = require('./routes/columns');
   const exportRoutes = require('./routes/export');
+  const initRoutes = require('./routes/init');
   const { sequelize } = require('./models');
 
   const app = express();
@@ -69,6 +70,7 @@ const express = require('express');
   app.use('/api/suppliers', suppliersRoutes);
   app.use('/api/columns', columnsRoutes);
   app.use('/api/export', exportRoutes);
+  app.use('/api/init', initRoutes);
 
   if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../frontend/build')));
@@ -85,11 +87,17 @@ const express = require('express');
 
   sequelize.sync({ force: false }).then(async () => {
     // Check if database is empty and initialize if needed
-    const { Column, Supplier } = require('./models');
-    const columnCount = await Column.count();
-
-    if (columnCount === 0) {
-      logger.info('Empty database detected, initializing...');
+    const { Column, Supplier, User } = require('./models');
+    
+    try {
+      const columnCount = await Column.count();
+      const supplierCount = await Supplier.count();
+      const userCount = await User.count();
+      
+      logger.info(`Database status - Columns: ${columnCount}, Suppliers: ${supplierCount}, Users: ${userCount}`);
+      
+      if (columnCount === 0) {
+        logger.info('Initializing columns...');
 
       // Create columns
       const columns = [
@@ -105,16 +113,16 @@ const express = require('express');
       const suppliers = [
         // Wasserdichte Inkontinenz-Bettwäsche Lieferanten
         { company: 'PROCAVE GmbH', type: 'Hersteller', location: 'Deutschland, Erfurt', email: 'info@procave.de', phone: '+49 361 3400 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 0 },
-        { company: 'Erwin Müller Versandhaus GmbH', type: 'Hersteller und Händler', location: 'Deutschland, Buttenwiesen', email: 'service@erwinmueller.com', phone: '+49 9274 960 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 1 },
+        { company: 'Erwin Müller Versandhaus GmbH', type: 'Hersteller und Händler', location: 'Deutschland, Buttenwiesen', email: 'service@erwinmueller.de', phone: '+49 9274 960 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 1 },
         { company: 'Suprima GmbH', type: 'Hersteller', location: 'Deutschland, Dürrwangen', email: 'info@suprima.de', phone: '+49 9856 9224 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 2 },
         { company: 'PAUL HARTMANN AG', type: 'Hersteller', location: 'Deutschland, Heidenheim', email: 'info@hartmann.info', phone: '+49 7321 36 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 3 },
         { company: 'Abena GmbH', type: 'Hersteller und Vertriebsunternehmen', location: 'Deutschland, Zörbig', email: 'info@abena.de', phone: '+49 34956 6990', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 4 },
         { company: 'GVS-GROSSVERBRAUCHERSPEZIALISTEN eG', type: 'Großhändler', location: 'Deutschland, Neukirchen', email: 'info@gvs-eg.de', phone: '+49 6674 9999 150', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 5 },
         { company: 'Telarion UG (haftungsbeschränkt)', type: 'Hersteller und Händler', location: 'Deutschland, Bad Homburg', email: 'info@telarion.de', phone: '+49 6172 2655 800', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 6 },
-        { company: 'Bäumer Betriebshygiene Vertriebsgesellschaft mbH', type: 'Händler', location: 'Deutschland, Krefeld', email: 'info@baeumer-hygiene.de', phone: '+49 2151 979800', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 7 },
+        { company: 'Bäumer Betriebshygiene Vertriebsgesellschaft mbH', type: 'Händler', location: 'Deutschland, Krefeld', email: 'info@baeumer-h.de', phone: '+49 2151 979800', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 7 },
         { company: 'Sanitätshaus Müller GmbH', type: 'Händler', location: 'Deutschland, Aue', email: 'info@sanitaetshaus-mueller.de', phone: '+49 3736 070070', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 8 },
         { company: 'RCC Reha Care Competenz GmbH', type: 'Händler', location: 'Deutschland, Olpe', email: 'info@rcc-reha.de', phone: '+49 2762 40740', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 9 },
-        { company: 'MIDAS PHARMA GMBH', type: 'Vertriebsunternehmen', location: 'Deutschland, Ingelheim', email: 'info@midas-pharma.com', phone: '+49 6132 990 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 10 },
+        { company: 'MIDAS PHARMA GMBH', type: 'Vertriebsunternehmen', location: 'Deutschland, Ingelheim', email: 'info@midas-pharma.de', phone: '+49 6132 990 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 10 },
         { company: 'OSKAR PAHLKE GMBH', type: 'Hersteller', location: 'Deutschland, Reinbek', email: 'info@pahlke.de', phone: '+49 40 727 702 0', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 11 },
         { company: 'TZMO Deutschland GmbH', type: 'Hersteller und Vertriebsunternehmen', location: 'Deutschland/Polen, Köln', email: 'info@tzmo.de', phone: '+49 221 880 4688', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 12 },
         { company: 'SC DEMOTEKS MEDIKAL SRL', type: 'Hersteller', location: 'Rumänien, Bukarest', email: 'office@demoteks.ro', phone: '+40 21 255 3151', products: 'Wasserdichte Inkontinenz-Bettwäsche', status: 'todo', position: 13 },
@@ -131,22 +139,34 @@ const express = require('express');
       ];
 
       await Supplier.bulkCreate(suppliers);
-
-      // Create default user
+      logger.info(`Created ${suppliers.length} suppliers`);
+    }
+    
+    // Create default user if not exists
+    if (userCount === 0) {
+      logger.info('Creating default user...');
       const bcrypt = require('bcryptjs');
-      const { User } = require('./models');
       const hashedPassword = await bcrypt.hash('BrandeaTexamed2025', 10);
       await User.create({
         username: 'Brandea-Texamed',
         password_hash: hashedPassword
       });
-
-      logger.info('Database initialized with sample data and user');
+      logger.info('Default user created');
     }
+    
+    // Final status
+    const finalSupplierCount = await Supplier.count();
+    logger.info(`Database initialization complete. Total suppliers: ${finalSupplierCount}`);
+    
+  } catch (error) {
+    logger.error('Database initialization error:', error);
+    // Don't crash the server, continue running
+  }
 
-    app.listen(PORT, () => {
-      logger.info(`Server running on port ${PORT}`);
-    });
-  }).catch(err => {
-    logger.error('Unable to connect to the database:', err);
+  app.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
   });
+}).catch(err => {
+  logger.error('Unable to connect to the database:', err);
+  process.exit(1);
+});
