@@ -1,9 +1,13 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const path = require('path');
 
+const dbPath = process.env.NODE_ENV === 'production' && process.env.DATABASE_PATH
+  ? process.env.DATABASE_PATH
+  : path.join(__dirname, '../db/brandea_crm.sqlite');
+
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: path.join(__dirname, '../db/brandea_crm.sqlite'),
+  storage: dbPath,
   logging: false
 });
 
