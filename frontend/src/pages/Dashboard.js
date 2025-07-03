@@ -46,6 +46,7 @@ function Dashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [activeId, setActiveId] = useState(null);
+  const [activeColumnId, setActiveColumnId] = useState('todo');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -291,9 +292,35 @@ function Dashboard() {
               columnIndex={columnIndex}
               allColumns={columns}
               allSuppliersByStatus={suppliersByStatus}
+              isActive={column.id === activeColumnId}
             />
           ))}
         </div>
+
+        {/* Mobile Tab Navigation */}
+        <div className="mobile-tabs">
+          {columns.map((column) => (
+            <button
+              key={column.id}
+              className={`mobile-tab ${column.id === activeColumnId ? 'active' : ''}`}
+              onClick={() => setActiveColumnId(column.id)}
+            >
+              <span className="mobile-tab-count">
+                {suppliersByStatus[column.id]?.length || 0}
+              </span>
+              <span>{column.name}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Floating Action Button for Mobile */}
+        <button
+          className="fab"
+          onClick={() => setShowAddForm(true)}
+          aria-label="Neuer Lieferant hinzufügen"
+        >
+          <Plus size={24} />
+        </button>
 
         <DragOverlay>
           {activeSupplier ? (
@@ -336,14 +363,14 @@ function Dashboard() {
 }
 
 // Separate Column Component for better drop zone handling
-function KanbanColumn({ column, suppliers, columnIndex, allColumns, allSuppliersByStatus }) {
+function KanbanColumn({ column, suppliers, columnIndex, allColumns, allSuppliersByStatus, isActive }) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
   });
 
   return (
     <motion.div
-      className="kanban-column"
+      className={`kanban-column ${isActive ? 'active' : ''}`}
       initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: columnIndex * 0.1 }}
