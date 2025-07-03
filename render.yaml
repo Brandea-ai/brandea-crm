@@ -1,3 +1,9 @@
+databases:
+  - name: brandea-crm-db
+    databaseName: brandea_crm
+    user: brandea_user
+    plan: free
+
 services:
   - type: web
     name: brandea-api
@@ -10,9 +16,7 @@ services:
         value: production
       - key: JWT_SECRET
         generateValue: true
-      - key: DATABASE_PATH
-        value: /var/data/brandea_crm.sqlite
-    disk:
-      name: sqlite-storage
-      mountPath: /var/data
-      sizeGB: 1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: brandea-crm-db
+          property: connectionString
