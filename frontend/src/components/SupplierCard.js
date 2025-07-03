@@ -268,9 +268,11 @@ function SupplierCard({ supplier, columns, suppliersByStatus, isDragging = false
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsExpanded(!isExpanded)}
             className="btn-expand"
-            aria-label={isExpanded ? "Weniger anzeigen" : "Mehr anzeigen"}
+            aria-label={isExpanded ? "Weniger anzeigen" : "Mehr Details anzeigen"}
+            title={isExpanded ? "Weniger anzeigen" : "Mehr Details anzeigen"}
           >
             {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+            {!isExpanded && <span className="expand-hint">Details</span>}
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.1, color: '#e53e3e' }}

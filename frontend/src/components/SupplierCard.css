@@ -88,7 +88,93 @@
   gap: 4px;
 }
 
-.btn-expand,
+.btn-expand {
+  background: #6366f1;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2);
+}
+
+.btn-expand:hover {
+  background: #4f46e5;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-expand:active {
+  transform: scale(0.95);
+}
+
+/* Pulse animation for expand button */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(99, 102, 241, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.supplier-card:not(.expanded) .btn-expand {
+  animation: pulse 2s infinite;
+}
+
+/* Expand hint tooltip */
+.expand-hint {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.expand-hint::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid #1e293b;
+}
+
+.btn-expand:hover .expand-hint {
+  opacity: 1;
+}
+
+/* Hide the hint on mobile - it's redundant there */
+@media (max-width: 768px) {
+  .expand-hint {
+    display: none;
+  }
+}
+
 .btn-delete {
   background: transparent;
   border: none;
@@ -103,11 +189,6 @@
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-}
-
-.btn-expand:hover {
-  background: #f1f5f9;
-  color: #475569;
 }
 
 .btn-delete:hover {
@@ -487,7 +568,13 @@
     font-weight: 600;
   }
 
-  .btn-expand,
+  .btn-expand {
+    width: 44px;
+    height: 44px;
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  }
+  
   .btn-delete {
     width: 44px;
     height: 44px;
