@@ -1,10 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { X, TrendingUp, Users, Clock, CheckCircle, BarChart3, PieChart } from 'lucide-react';
-import { BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { X, TrendingUp, Users, Clock, CheckCircle, BarChart3, PieChart, Calendar, Target, Activity, Download, Share2, Filter } from 'lucide-react';
+import { BarChart, Bar, PieChart as RePieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Area, AreaChart } from 'recharts';
 import './Statistics.css';
 
 function Statistics({ onClose, suppliers, columns }) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [timeRange, setTimeRange] = useState('month');
+  
   // Calculate statistics
   const suppliersByStatus = {};
   columns.forEach(col => {
@@ -22,6 +25,20 @@ function Statistics({ onClose, suppliers, columns }) {
     acc[country] = (acc[country] || 0) + 1;
     return acc;
   }, {});
+
+  // Calculate conversion rate
+  const conversionRate = ((suppliersByStatus.done || 0) / suppliers.length * 100).toFixed(1);
+  const contactRate = (((suppliersByStatus.contacted || 0) + (suppliersByStatus.offer || 0) + (suppliersByStatus.done || 0)) / suppliers.length * 100).toFixed(1);
+  
+  // Mock timeline data for premium chart
+  const timelineData = [
+    { month: 'Jan', contacted: 4, offers: 2, done: 1 },
+    { month: 'Feb', contacted: 6, offers: 3, done: 2 },
+    { month: 'Mär', contacted: 8, offers: 5, done: 3 },
+    { month: 'Apr', contacted: 12, offers: 7, done: 5 },
+    { month: 'Mai', contacted: 15, offers: 9, done: 6 },
+    { month: 'Jun', contacted: 18, offers: 11, done: 8 },
+  ];
 
   // Prepare data for charts
   const statusData = columns.map(col => ({
@@ -41,6 +58,13 @@ function Statistics({ onClose, suppliers, columns }) {
   })).sort((a, b) => b.value - a.value).slice(0, 5);
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'];
+  const GRADIENT_COLORS = [
+    { start: '#6366f1', end: '#4f46e5' },
+    { start: '#8b5cf6', end: '#7c3aed' },
+    { start: '#ec4899', end: '#db2777' },
+    { start: '#f59e0b', end: '#d97706' },
+    { start: '#10b981', end: '#059669' },
+  ];
 
   return (
     <motion.div
@@ -58,16 +82,83 @@ function Statistics({ onClose, suppliers, columns }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="statistics-header">
-          <h2>
-            <BarChart3 className="header-icon" />
-            Statistiken & Analysen
-          </h2>
-          <button onClick={onClose} className="close-button" aria-label="Schließen">
-            <X size={24} />
+          <div className="header-content">
+            <h2>
+              <BarChart3 className="header-icon" />
+              Analytics Dashboard
+            </h2>
+            <span className="premium-badge">PRO</span>
+          </div>
+          <div className="header-actions">
+            <button className="action-button">
+              <Download size={20} />
+              <span className="desktop-only">Export</span>
+            </button>
+            <button className="action-button">
+              <Share2 size={20} />
+              <span className="desktop-only">Teilen</span>
+            </button>
+            <button onClick={onClose} className="close-button" aria-label="Schließen">
+              <X size={24} />
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Navigation */}
+        <div className="stats-tabs">
+          <button 
+            className={`tab ${activeTab === 'overview' ? 'active' : ''}`}
+            onClick={() => setActiveTab('overview')}
+          >
+            <Activity size={18} />
+            Überblick
+          </button>
+          <button 
+            className={`tab ${activeTab === 'timeline' ? 'active' : ''}`}
+            onClick={() => setActiveTab('timeline')}
+          >
+            <TrendingUp size={18} />
+            Verlauf
+          </button>
+          <button 
+            className={`tab ${activeTab === 'targets' ? 'active' : ''}`}
+            onClick={() => setActiveTab('targets')}
+          >
+            <Target size={18} />
+            Ziele
+          </button>
+        </div>
+
+        {/* Time Range Selector */}
+        <div className="time-range-selector">
+          <button 
+            className={`range-button ${timeRange === 'week' ? 'active' : ''}`}
+            onClick={() => setTimeRange('week')}
+          >
+            7 Tage
+          </button>
+          <button 
+            className={`range-button ${timeRange === 'month' ? 'active' : ''}`}
+            onClick={() => setTimeRange('month')}
+          >
+            30 Tage
+          </button>
+          <button 
+            className={`range-button ${timeRange === 'quarter' ? 'active' : ''}`}
+            onClick={() => setTimeRange('quarter')}
+          >
+            Quartal
+          </button>
+          <button 
+            className={`range-button ${timeRange === 'year' ? 'active' : ''}`}
+            onClick={() => setTimeRange('year')}
+          >
+            Jahr
           </button>
         </div>
 
         <div className="statistics-content">
+          {activeTab === 'overview' && (
           {/* Overview Cards */}
           <div className="stats-overview">
             <motion.div

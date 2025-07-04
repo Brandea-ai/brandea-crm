@@ -491,12 +491,51 @@
   font-weight: 500;
 }
 
+/* Swipe Indicators */
+.swipe-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+}
+
+.swipe-indicator.swipe-left {
+  left: -30px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+}
+
+.swipe-indicator.swipe-right {
+  right: -30px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+}
+
+.swipe-indicator.visible {
+  opacity: 1;
+}
+
+.supplier-card.swiping {
+  transition: none;
+  user-select: none;
+}
+
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .supplier-card {
     margin-bottom: 16px;
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: visible;
   }
 
   .card-drag-handle {

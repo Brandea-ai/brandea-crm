@@ -27,6 +27,16 @@ import {
   Users,
   TrendingUp,
   Clock,
+  Menu,
+  X,
+  SlidersHorizontal,
+  ArrowUpDown,
+  Calendar,
+  Target,
+  Activity,
+  Bell,
+  Settings,
+  ChevronRight,
 } from 'lucide-react';
 import { fetchSuppliers, fetchColumns, updateSupplierStatus, optimisticUpdate } from '../store/suppliersSlice';
 import { logout } from '../store/authSlice';
@@ -47,6 +57,10 @@ function Dashboard() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [activeId, setActiveId] = useState(null);
   const [activeColumnId, setActiveColumnId] = useState('todo');
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState('updatedAt');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -179,11 +193,98 @@ function Dashboard() {
       onDragCancel={handleDragCancel}
     >
       <div className="dashboard">
+        {/* Professional Mobile Menu Overlay */}
+        <div className={`mobile-menu-overlay ${showMobileMenu ? 'active' : ''}`} onClick={() => setShowMobileMenu(false)} />
+        
+        {/* Professional Slide-Out Menu */}
+        <div className={`mobile-menu ${showMobileMenu ? 'active' : ''}`}>
+          <div className="menu-header">
+            <div className="menu-user-info">
+              <div className="user-avatar">
+                {user?.username?.charAt(0).toUpperCase()}
+              </div>
+              <div className="user-details">
+                <h3>{user?.username}</h3>
+                <p>Premium Account</p>
+              </div>
+            </div>
+            <button className="menu-close" onClick={() => setShowMobileMenu(false)}>
+              <X size={24} />
+            </button>
+          </div>
+
+          <nav className="menu-nav">
+            <div className="menu-section">
+              <h4>Übersicht</h4>
+              <button className="menu-item active">
+                <LayoutDashboard size={20} />
+                <span>Dashboard</span>
+                <ChevronRight size={16} />
+              </button>
+              <button className="menu-item" onClick={() => { setShowStatistics(true); setShowMobileMenu(false); }}>
+                <BarChart3 size={20} />
+                <span>Statistiken</span>
+                <span className="menu-badge">PRO</span>
+              </button>
+              <button className="menu-item">
+                <Activity size={20} />
+                <span>Aktivitäten</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+
+            <div className="menu-section">
+              <h4>Verwaltung</h4>
+              <button className="menu-item" onClick={() => { setShowAddForm(true); setShowMobileMenu(false); }}>
+                <Plus size={20} />
+                <span>Neuer Lieferant</span>
+                <ChevronRight size={16} />
+              </button>
+              <button className="menu-item" onClick={() => { handleExport(); setShowMobileMenu(false); }}>
+                <Download size={20} />
+                <span>Daten exportieren</span>
+                <ChevronRight size={16} />
+              </button>
+              <button className="menu-item">
+                <Target size={20} />
+                <span>Ziele</span>
+                <span className="menu-count">3</span>
+              </button>
+            </div>
+
+            <div className="menu-section">
+              <h4>Einstellungen</h4>
+              <button className="menu-item">
+                <Bell size={20} />
+                <span>Benachrichtigungen</span>
+                <div className="menu-toggle active" />
+              </button>
+              <button className="menu-item">
+                <Settings size={20} />
+                <span>Einstellungen</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </nav>
+
+          <div className="menu-footer">
+            <button className="menu-logout" onClick={() => dispatch(logout())}>
+              <LogOut size={20} />
+              <span>Abmelden</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Professional Header with Menu Button */}
         <header className="dashboard-header">
           <div className="header-left">
+            <button className="menu-trigger" onClick={() => setShowMobileMenu(true)}>
+              <Menu size={24} />
+            </button>
             <h1>
               <LayoutDashboard className="header-icon" />
-              Brandea CRM
+              <span className="desktop-only">Brandea CRM</span>
+              <span className="mobile-only">CRM</span>
             </h1>
           </div>
           
@@ -296,6 +397,76 @@ function Dashboard() {
             />
           ))}
         </div>
+
+        {/* Professional Filter Bar */}
+        <div className={`filter-bar ${showFilters ? 'active' : ''}`}>
+          <div className="filter-header">
+            <h3>Filter & Sortierung</h3>
+            <button className="filter-close" onClick={() => setShowFilters(false)}>
+              <X size={20} />
+            </button>
+          </div>
+          
+          <div className="filter-content">
+            <div className="filter-group">
+              <label>Status</label>
+              <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                <option value="all">Alle Status</option>
+                {columns.map(col => (
+                  <option key={col.id} value={col.id}>{col.name}</option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="filter-group">
+              <label>Sortieren nach</label>
+              <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                <option value="updatedAt">Zuletzt aktualisiert</option>
+                <option value="company">Firma</option>
+                <option value="createdAt">Erstellungsdatum</option>
+                <option value="location">Standort</option>
+              </select>
+            </div>
+            
+            <div className="filter-group">
+              <label>Reihenfolge</label>
+              <div className="filter-buttons">
+                <button 
+                  className={`filter-button ${sortOrder === 'asc' ? 'active' : ''}`}
+                  onClick={() => setSortOrder('asc')}
+                >
+                  Aufsteigend
+                </button>
+                <button 
+                  className={`filter-button ${sortOrder === 'desc' ? 'active' : ''}`}
+                  onClick={() => setSortOrder('desc')}
+                >
+                  Absteigend
+                </button>
+              </div>
+            </div>
+            
+            <div className="filter-actions">
+              <button className="btn-apply-filters" onClick={() => setShowFilters(false)}>
+                Filter anwenden
+              </button>
+              <button className="btn-reset-filters" onClick={() => {
+                setFilterStatus('all');
+                setSortBy('updatedAt');
+                setSortOrder('desc');
+              }}>
+                Zurücksetzen
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Filter Toggle */}
+        <button className="mobile-filter-toggle" onClick={() => setShowFilters(!showFilters)}>
+          <SlidersHorizontal size={20} />
+          <span>Filter</span>
+          {filterStatus !== 'all' && <span className="filter-indicator" />}
+        </button>
 
         {/* Mobile Tab Navigation */}
         <div className="mobile-tabs">

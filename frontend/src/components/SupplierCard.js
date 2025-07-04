@@ -32,7 +32,11 @@ function SupplierCard({ supplier, columns, suppliersByStatus, isDragging = false
   const [editField, setEditField] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [swipeX, setSwipeX] = useState(0);
+  const [isSwipeActive, setIsSwipeActive] = useState(false);
   const editRef = useRef(null);
+  const cardRef = useRef(null);
+  const startXRef = useRef(null);
 
   const {
     attributes,
@@ -229,18 +233,69 @@ function SupplierCard({ supplier, columns, suppliersByStatus, isDragging = false
     );
   }
 
+  // Touch event handlers for swipe
+  const handleTouchStart = (e) => {
+    if (editField) return; // Don't swipe while editing
+    startXRef.current = e.touches[0].clientX;
+    setIsSwipeActive(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isSwipeActive || !startXRef.current) return;
+    const currentX = e.touches[0].clientX;
+    const diff = currentX - startXRef.current;
+    
+    // Limit swipe distance
+    if (Math.abs(diff) < 150) {
+      setSwipeX(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwipeActive) return;
+    
+    if (swipeX > 80) {
+      // Swipe right - Quick edit
+      setIsExpanded(true);
+    } else if (swipeX < -80) {
+      // Swipe left - Quick actions
+      // Show quick actions menu
+    }
+    
+    setSwipeX(0);
+    setIsSwipeActive(false);
+    startXRef.current = null;
+  };
+
   return (
     <motion.div
-      ref={setNodeRef}
-      style={style}
-      className={`supplier-card ${isSortableDragging ? 'sorting' : ''} ${isExpanded ? 'expanded' : ''}`}
+      ref={(node) => {
+        setNodeRef(node);
+        cardRef.current = node;
+      }}
+      style={{
+        ...style,
+        transform: `${style?.transform || ''} translateX(${swipeX}px)`,
+      }}
+      className={`supplier-card ${isSortableDragging ? 'sorting' : ''} ${isExpanded ? 'expanded' : ''} ${isSwipeActive ? 'swiping' : ''}`}
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1, y: 0, x: swipeX }}
       exit={{ opacity: 0, scale: 0.9 }}
       whileHover={{ y: -2, boxShadow: '0 8px 30px rgba(0,0,0,0.12)' }}
       role="article"
       aria-label={`Lieferant: ${supplier.company}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
+      {/* Swipe Indicators */}
+      <div className={`swipe-indicator swipe-left ${swipeX < -40 ? 'visible' : ''}`}>
+        <Trash2 size={20} />
+      </div>
+      <div className={`swipe-indicator swipe-right ${swipeX > 40 ? 'visible' : ''}`}>
+        <Edit3 size={20} />
+      </div>
+
       <div className="card-drag-handle" {...attributes} {...listeners}>
         <GripVertical size={20} />
       </div>
